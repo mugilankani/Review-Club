@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
 const logger = require("./middleware/requestLogger");
+const cookieParser = require("cookie-parser");
 
 const {
 	generateGoogleOauthLink,
@@ -16,15 +17,27 @@ const port = process.env.PORT || 3000;
 const prisma = new PrismaClient();
 
 // Middleware
-app.use(cors());
+app.use(
+	cors({
+		origin: process.env.FRONTEND_URL,
+		optionsSuccessStatus: 200,
+		credentials: true,
+	})
+);
 app.use(logger);
+app.use(cookieParser());
 
 app.get("/auth/google", generateGoogleOauthLink);
 app.get("/auth/google/callback", googleOauthCallback);
 
-// routes
-app.get("/login", (req, res) => {
-	res.send("Login page");
+app.get("/auth", authenticate, async (req, res) => {
+	const userId = req.userId;
+
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+	});
+
+	res.json(user);
 });
 
 // Fetch all posts
@@ -33,6 +46,7 @@ app.get("/allposts", async (req, res) => {
 		const posts = await prisma.review.findMany({
 			include: { user: true },
 		});
+		console.log(posts);
 		res.json(posts);
 	} catch (error) {
 		console.error("Error fetching posts:", error);
