@@ -2,8 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
-const logger = require("./middleware/requestLogger");
+const multer = require('multer');
 
+const logger = require("./middleware/requestLogger");
 const {
 	generateGoogleOauthLink,
 	googleOauthCallback,
@@ -13,6 +14,7 @@ const authenticate = require("./middleware/authenticate");
 const app = express();
 const port = process.env.PORT || 3000;
 
+const upload = multer({ storage: multer.memoryStorage() });
 const prisma = new PrismaClient();
 
 // Middleware
@@ -33,37 +35,43 @@ app.get("/allposts", async (req, res) => {
 		const posts = await prisma.review.findMany({
 			include: { user: true },
 		});
-		res.json(posts);
+		res.json(posts); // Ensure this sends JSON
 	} catch (error) {
 		console.error("Error fetching posts:", error);
-		res.status(500).send("Error fetching posts");
+		res.status(500).json({ message: "Error fetching posts" }); // Return JSON error message
 	}
 });
+
 
 // Create a new post
-app.post("/post", async (req, res) => {
-	const { userId, name, content, images } = req.body;
-
+app.post('/post', upload.array('images', 4), async (req, res) => {
+	const { name, content, rating, date, edited, likes, comments } = req.body;
+	const images = req.files ? req.files.map(file => file.buffer.toString('base64')) : [];
+  
 	// Validate the input
-	if (!userId || !name || !content) {
-		return res.status(400).send("User ID, name, and content are required");
+	if (!name || !content || rating == null) {
+	  return res.status(400).send('Name, content, and rating are required');
 	}
-
+  
 	try {
-		const newPost = await prisma.review.create({
-			data: {
-				userId,
-				name,
-				content,
-				images: images || [],
-			},
-		});
-		res.status(201).json(newPost); // Respond with the created post and status code 201 (Created)
+	  const newPost = await prisma.review.create({
+		data: {
+		  name,
+		  content,
+		  rating: parseInt(rating),
+		  date,
+		  edited: edited === 'true',
+		  likes: parseInt(likes),
+		  comments: parseInt(comments),
+		  images,
+		},
+	  });
+	  res.status(201).json(newPost);
 	} catch (error) {
-		console.error("Error creating post:", error);
-		res.status(500).send("Error creating post");
+	  console.error('Error creating post:', error);
+	  res.status(500).send('Error creating post');
 	}
-});
+  });
 
 // Fetch a single post by ID
 app.get("/post/:id", async (req, res) => {
