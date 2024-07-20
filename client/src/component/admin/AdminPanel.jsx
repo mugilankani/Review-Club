@@ -32,33 +32,33 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-gray-100">
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-indigo-800 min-h-screen p-4">
+        <div className="w-64 bg-[#242E34] min-h-screen p-4">
           <h1 className="text-white text-2xl font-bold mb-8">Review Club Admin</h1>
           <nav>
             <button
               onClick={() => setActiveTab('users')}
-              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'users' ? 'bg-indigo-900' : 'hover:bg-indigo-700'}`}
+              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'users' ? 'bg-indigo-900' : 'hover:bg-indigo-950'}`}
             >
               <Users className="mr-2" />
               Users
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'reviews' ? 'bg-indigo-900' : 'hover:bg-indigo-700'}`}
+              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'reviews' ? 'bg-indigo-900' : 'hover:bg-indigo-950'}`}
             >
               <CheckSquare className="mr-2" />
               Review Approvals
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'analytics' ? 'bg-indigo-900' : 'hover:bg-indigo-700'}`}
+              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'analytics' ? 'bg-indigo-900' : 'hover:bg-indigo-950'}`}
             >
               <BarChart2 className="mr-2" />
               Analytics
             </button>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'settings' ? 'bg-indigo-900' : 'hover:bg-indigo-700'}`}
+              className={`flex items-center text-white mb-4 p-2 w-full rounded-md ${activeTab === 'settings' ? 'bg-indigo-900' : 'hover:bg-indigo-950'}`}
             >
               <Settings className="mr-2" />
               Settings

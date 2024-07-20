@@ -5,6 +5,7 @@ import './App.css'
 import AdminPanel from './component/admin/AdminPanel'
 import ReviewClub from './component/user/ReviewClub'
 import {  Routes, Route } from 'react-router-dom'
+import LoginPage from './component/utils/Login'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -12,7 +13,8 @@ function App() {
     <>
       <Routes >
         <Route path="/" element={<ReviewClub />} />
-        <Route path="/admin/dashboard" element={<AdminPanel />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/Login" element={<LoginPage />} />
       </Routes>
     </>
   )
