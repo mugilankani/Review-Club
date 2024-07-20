@@ -6,8 +6,8 @@ const sampleReviews = [
   {
     id: 1,
     user: 'John Doe',
-    course: 'Web Development Bootcamp',
-    content: 'This course did not deliver on its promises. The curriculum was outdated and the support was lacking.',
+    name: 'Web Development Bootcamp',
+    content: 'This name did not deliver on its promises. The curriculum was outdated and the support was lacking.',
     images: ['/api/placeholder/400/300'],
     approved: true,
     likes: 24,
@@ -16,8 +16,8 @@ const sampleReviews = [
   {
     id: 2,
     user: 'Jane Smith',
-    course: 'Data Science Masterclass',
-    content: 'Great course content, but the pacing was too fast. Not suitable for beginners as advertised.',
+    name: 'Data Science Masterclass',
+    content: 'Great name content, but the pacing was too fast. Not suitable for beginners as advertised.',
     images: ['/api/placeholder/400/300', '/api/placeholder/400/300'],
     approved: false,
     likes: 12,
@@ -124,7 +124,7 @@ export default function ReviewClub() {
                       />
                       <div>
                         <h3 className="font-semibold">{review.user}</h3>
-                        <p className="text-sm text-gray-500">{review.course}</p>
+                        <p className="text-sm text-gray-500">{review.name}</p>
                       </div>
                     </div>
                     {review.approved && (
