@@ -6,6 +6,7 @@ import AdminPanel from './component/admin/AdminPanel'
 import ReviewClub from './component/user/ReviewClub'
 import {  Routes, Route } from 'react-router-dom'
 import LoginPage from './component/utils/Login'
+import UserDashboard from './component/user/UserDashboard'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<ReviewClub />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/Login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
       </Routes>
     </>
   )
