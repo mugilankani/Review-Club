@@ -16,8 +16,8 @@ const sampleUser = {
 const sampleReviews = [
   {
     id: 1,
-    course: 'Web Development Bootcamp',
-    content: 'Great course! Learned a lot about modern web technologies.',
+    name : 'Web Development Bootcamp',
+    content: 'Great name ! Learned a lot about modern web technologies.',
     rating: 4,
     date: '2023-03-10',
     edited: false,
@@ -26,7 +26,7 @@ const sampleReviews = [
   },
   {
     id: 2,
-    course: 'Machine Learning Fundamentals',
+    name : 'Machine Learning Fundamentals',
     content: 'Excellent introduction to ML concepts. Could use more practical examples.',
     rating: 3,
     date: '2023-05-22',
@@ -243,7 +243,7 @@ function UserDashboard() {
                     className="bg-white shadow-sm rounded-lg overflow-hidden mb-4"
                   >
                     <div className="p-4">
-                      <h3 className="text-xl font-bold">{review.course}</h3>
+                      <h3 className="text-xl font-bold">{review.name}</h3>
                       <p className="text-gray-700 mt-2">{review.content}</p>
                       <div className="flex items-center mt-4">
                         <Star

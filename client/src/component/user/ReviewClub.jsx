@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Search, Menu, X, Filter, ThumbsUp, MessageSquare, Flag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Sample data
 const sampleReviews = [
   {
     id: 1,
     user: 'John Doe',
-    course: 'Web Development Bootcamp',
-    content: 'This course did not deliver on its promises. The curriculum was outdated and the support was lacking.',
+    name: 'Web Development Bootcamp',
+    content: 'This name did not deliver on its promises. The curriculum was outdated and the support was lacking.',
     images: ['/api/placeholder/400/300'],
     approved: true,
     likes: 24,
@@ -16,8 +17,8 @@ const sampleReviews = [
   {
     id: 2,
     user: 'Jane Smith',
-    course: 'Data Science Masterclass',
-    content: 'Great course content, but the pacing was too fast. Not suitable for beginners as advertised.',
+    name: 'Data Science Masterclass',
+    content: 'Great name content, but the pacing was too fast. Not suitable for beginners as advertised.',
     images: ['/api/placeholder/400/300', '/api/placeholder/400/300'],
     approved: false,
     likes: 12,
@@ -39,7 +40,7 @@ export default function ReviewClub() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-2xl font-bold text-indigo-600">Review Club</h1>
+              <Link to='/' className="text-2xl font-bold text-indigo-600 cursor-pointer">Review Club</Link>
             </div>
             <div className="flex items-center">
               <button
@@ -48,8 +49,8 @@ export default function ReviewClub() {
               >
                 {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <div className="hidden lg:ml-6 lg:flex lg:items-center">
-                <div className="flex-shrink-0">
+              <Link to="/dashboard" className="hidden lg:ml-6 lg:flex lg:items-center">
+                <div className="flex-shrink-0 ">
                   <img
                     className="h-10 w-10 rounded-full"
                     src="/api/placeholder/40/40"
@@ -57,7 +58,7 @@ export default function ReviewClub() {
                   />
                 </div>
                 <span className="ml-3 text-gray-700">John Doe</span>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -124,7 +125,7 @@ export default function ReviewClub() {
                       />
                       <div>
                         <h3 className="font-semibold">{review.user}</h3>
-                        <p className="text-sm text-gray-500">{review.course}</p>
+                        <p className="text-sm text-gray-500">{review.name}</p>
                       </div>
                     </div>
                     {review.approved && (
