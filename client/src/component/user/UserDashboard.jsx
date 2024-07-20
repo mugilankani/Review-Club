@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { User, Edit, Trash2, Star, Clock, Eye, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Edit, Trash2, Star, Clock, Eye, MessageCircle, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Sample user data
 const sampleUser = {
@@ -33,13 +34,28 @@ const sampleReviews = [
     likes: 8,
     comments: 1,
   },
+  // Add more sample reviews as needed
 ];
 
-export default function UserDashboard() {
+const reviewsPerPage = 2;
+
+function UserDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
   const [user, setUser] = useState(sampleUser);
   const [reviews, setReviews] = useState(sampleReviews);
   const [editingReview, setEditingReview] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState('date');
+
+  useEffect(() => {
+    // Sort reviews based on the selected sort option
+    const sortedReviews = [...reviews].sort((a, b) => {
+      if (sortOption === 'date') return new Date(b.date) - new Date(a.date);
+      if (sortOption === 'likes') return b.likes - a.likes;
+      return 0;
+    });
+    setReviews(sortedReviews);
+  }, [sortOption]);
 
   const handleProfileUpdate = (e) => {
     e.preventDefault();
@@ -48,7 +64,7 @@ export default function UserDashboard() {
   };
 
   const handleReviewEdit = (reviewId) => {
-    const reviewToEdit = reviews.find(review => review.id === reviewId);
+    const reviewToEdit = reviews.find((review) => review.id === reviewId);
     setEditingReview(reviewToEdit);
   };
 
@@ -61,8 +77,15 @@ export default function UserDashboard() {
 
   const handleReviewDelete = (reviewId) => {
     // Implement review deletion logic here
+    setReviews(reviews.filter((review) => review.id !== reviewId));
     console.log('Review deleted', reviewId);
   };
+
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+  const paginatedReviews = reviews.slice(
+    (currentPage - 1) * reviewsPerPage,
+    currentPage * reviewsPerPage
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -107,43 +130,70 @@ export default function UserDashboard() {
             {activeTab === 'profile' && (
               <div>
                 <div className="flex items-center mb-6">
-                  <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full mr-4" />
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-24 h-24 rounded-full mr-4"
+                  />
                   <div>
                     <h2 className="text-2xl font-bold">{user.name}</h2>
-                    <p className="text-gray-600">Joined on {user.joinedDate}</p>
+                    <p className="text-gray-600">
+                      Joined on {user.joinedDate}
+                    </p>
                   </div>
                 </div>
                 <form onSubmit={handleProfileUpdate}>
                   <div className="mb-4">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Name
+                    </label>
                     <input
                       type="text"
                       id="name"
                       name="name"
                       value={user.name}
-                      onChange={(e) => setUser({ ...user, name: e.target.value })}
+                      onChange={(e) =>
+                        setUser({ ...user, name: e.target.value })
+                      }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     />
                   </div>
                   <div className="mb-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Email
+                    </label>
                     <input
                       type="email"
                       id="email"
                       name="email"
                       value={user.email}
-                      onChange={(e) => setUser({ ...user, email: e.target.value })}
+                      onChange={(e) =>
+                        setUser({ ...user, email: e.target.value })
+                      }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     />
                   </div>
                   <div className="mb-4">
-                    <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Bio</label>
+                    <label
+                      htmlFor="bio"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Bio
+                    </label>
                     <textarea
                       id="bio"
                       name="bio"
                       rows="3"
                       value={user.bio}
-                      onChange={(e) => setUser({ ...user, bio: e.target.value })}
+                      onChange={(e) =>
+                        setUser({ ...user, bio: e.target.value })
+                      }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                     ></textarea>
                   </div>
@@ -159,104 +209,117 @@ export default function UserDashboard() {
 
             {activeTab === 'reviews' && (
               <div>
-                <h2 className="text-2xl font-bold mb-4">My Reviews</h2>
-                {reviews.map((review) => (
-                  <div key={review.id} className="bg-gray-50 p-4 rounded-lg mb-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-semibold">{review.course}</h3>
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={16} className={i < review.rating ? 'text-yellow-400' : 'text-gray-300'} />
-                        ))}
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold">My Reviews</h2>
+                  <Link
+                    to="/create-review"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    <Plus size={16} className="mr-1" />
+                    Create Review
+                  </Link>
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="sort"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Sort by
+                  </label>
+                  <select
+                    id="sort"
+                    name="sort"
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  >
+                    <option value="date">Date</option>
+                    <option value="likes">Most Liked</option>
+                  </select>
+                </div>
+                {paginatedReviews.map((review) => (
+                  <div
+                    key={review.id}
+                    className="bg-white shadow-sm rounded-lg overflow-hidden mb-4"
+                  >
+                    <div className="p-4">
+                      <h3 className="text-xl font-bold">{review.course}</h3>
+                      <p className="text-gray-700 mt-2">{review.content}</p>
+                      <div className="flex items-center mt-4">
+                        <Star
+                          size={16}
+                          className="text-yellow-500 mr-1"
+                        />
+                        <span>{review.rating}</span>
+                        <Clock
+                          size={16}
+                          className="text-gray-500 ml-4 mr-1"
+                        />
+                        <span>{review.date}</span>
+                        <Eye
+                          size={16}
+                          className="text-gray-500 ml-4 mr-1"
+                        />
+                        <span>{review.likes}</span>
+                        <MessageCircle
+                          size={16}
+                          className="text-gray-500 ml-4 mr-1"
+                        />
+                        <span>{review.comments}</span>
+                      </div>
+                      <div className="flex justify-end mt-4">
+                        <button
+                          onClick={() => handleReviewEdit(review.id)}
+                          className="text-indigo-600 hover:text-indigo-900 mr-4"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleReviewDelete(review.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     </div>
-                    {editingReview && editingReview.id === review.id ? (
-                      <form onSubmit={handleReviewUpdate}>
-                        <textarea
-                          value={editingReview.content}
-                          onChange={(e) => setEditingReview({ ...editingReview, content: e.target.value })}
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                          rows="3"
-                        ></textarea>
-                        <div className="mt-2 flex justify-end">
-                          <button
-                            type="button"
-                            onClick={() => setEditingReview(null)}
-                            className="mr-2 py-1 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            className="py-1 px-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </form>
-                    ) : (
-                      <>
-                        <p className="text-gray-600 mb-2">{review.content}</p>
-                        <div className="flex justify-between items-center text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <Clock size={16} className="mr-1" />
-                            <span>{review.date}</span>
-                            {review.edited && <span className="ml-2 text-xs">(edited)</span>}
-                          </div>
-                          <div>
-                            <button
-                              onClick={() => handleReviewEdit(review.id)}
-                              className="mr-2 text-indigo-600 hover:text-indigo-800"
-                            >
-                              <Edit size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleReviewDelete(review.id)}
-                              className="text-red-600 hover:text-red-800"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
                   </div>
                 ))}
+                <div className="flex justify-between mt-4">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    <ChevronLeft size={16} className="mr-1" />
+                    Previous
+                  </button>
+                  <span>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(prev + 1, totalPages)
+                      )
+                    }
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    Next
+                    <ChevronRight size={16} className="ml-1" />
+                  </button>
+                </div>
               </div>
             )}
 
             {activeTab === 'feed' && (
               <div>
-                <h2 className="text-2xl font-bold mb-4">Your Feed</h2>
-                {reviews.map((review) => (
-                  <div key={review.id} className="bg-white border border-gray-200 p-4 rounded-lg mb-4 shadow-sm">
-                    <div className="flex items-center mb-2">
-                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full mr-2" />
-                      <div>
-                        <h3 className="font-semibold">{user.name}</h3>
-                        <p className="text-sm text-gray-500">Reviewed {review.course}</p>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 mb-2">{review.content}</p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <Star size={16} className="text-yellow-400 mr-1" />
-                        <span>{review.rating}/5</span>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <span className="flex items-center">
-                          <Eye size={16} className="mr-1" />
-                          {review.likes}
-                        </span>
-                        <span className="flex items-center">
-                          <MessageCircle size={16} className="mr-1" />
-                          {review.comments}
-                        </span>
-                        <span>{review.date}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <h2 className="text-2xl font-bold">Feed</h2>
+                <p className="text-gray-600 mt-2">
+                  This is the feed section. Here you will see posts from other
+                  users.
+                </p>
+                {/* Placeholder for feed content */}
               </div>
             )}
           </div>
@@ -265,3 +328,5 @@ export default function UserDashboard() {
     </div>
   );
 }
+
+export default UserDashboard;
