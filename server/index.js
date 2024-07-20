@@ -63,38 +63,49 @@ app.get("/allposts", async (req, res) => {
 });
 
 // Create a new post
-app.post("/post", upload.array("images", 4), async (req, res) => {
+app.post("/post", upload.array("images", 4), authenticate, async (req, res) => {
+	const userId = req.userId; // Assume userId is set correctly by middleware
+
+	console.log("User ID:", userId);
+
 	const { name, content, rating, date, edited, likes, comments } = req.body;
 	const images = req.files
-	  ? req.files.map((file) => file.buffer.toString("base64"))
-	  : [];
-  
+		? req.files.map((file) => file.buffer.toString("base64"))
+		: [];
+
 	// Validate the input
 	if (!name || !content || rating == null) {
-	  return res.status(400).send("Name, content, and rating are required");
+		return res.status(400).send("Name, content, and rating are required");
 	}
-  
+
 	try {
-	  const newPost = await prisma.review.create({
-		data: {
-		  name,
-		  content,
-		  rating: parseInt(rating),
-		  date,
-		  edited: edited === "true",
-		  likes: parseInt(likes),
-		  comments: parseInt(comments),
-		  images,
-		},
-	  });
-	  res.status(201).json(newPost);
+		// Check if user exists
+		const user = await prisma.user.findUnique({
+			where: { id: userId },
+		});
+
+		if (!user) {
+			return res.status(401).send("Unauthorized");
+		}
+
+		// Create the review
+		const newPost = await prisma.review.create({
+			data: {
+				name,
+				content,
+				rating: parseInt(rating),
+				edited: edited === "true",
+				images,
+				userId: user.id,
+			},
+		});
+
+		res.status(201).json(newPost);
 	} catch (error) {
-	  console.error("Error creating post:", error);
-	  res.status(500).send("Error creating post");
+		console.error("Error creating post:", error);
+		res.status(500).send("Error creating post");
 	}
-  });
-  
-  
+});
 
 // Fetch a single post by ID
 app.get("/post/:id", async (req, res) => {
@@ -253,6 +264,8 @@ app.get("/admin/reviews", async (req, res) => {
 
 		const total = await prisma.review.count({ where });
 
+		console.log("Reviews:", reviews);
+		
 		res.json({
 			reviews,
 			currentPage: Number(page),

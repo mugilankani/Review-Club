@@ -24,6 +24,7 @@ model User {
   avatar         String?
   joinedDate     DateTime @default(now())
   reviews        Review[]
+  role           String   @default("user")
 }
 
 model Review {
@@ -33,6 +34,9 @@ model Review {
   name      String
   content   String
   images    String[]
+  date      DateTime @default(now())
+  edited    Boolean  @default(false)
+  rating    Int      @default(0)
   approved  Boolean  @default(false)
   likes     Int      @default(0)
   comments  Int      @default(0)
