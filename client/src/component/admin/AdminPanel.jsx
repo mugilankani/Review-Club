@@ -22,7 +22,9 @@ export default function AdminPanel() {
 
 		axios
 			.get("http://localhost:3000/admin/reviews")
-			.then((response) => setReviews(response.data.reviews))
+			.then((response) => {
+				setReviews(response.data.reviews);
+			})
 			.catch((error) => console.error("Error fetching reviews:", error));
 
 		axios
@@ -240,7 +242,21 @@ export default function AdminPanel() {
 									{filteredReviews.map((review) => (
 										<tr key={review.id}>
 											<td className="px-6 py-4 whitespace-nowrap">
-												{review.user}
+												{/* Display user details */}
+												<div className="flex items-center">
+													{/* Assuming review.user has a displayPicture */}
+													<img
+														className="w-10 h-10 rounded-full"
+														src={
+															review.user
+																.displayPicture
+														}
+														alt={review.user.name}
+													/>
+													<span className="ml-2">
+														{review.user.name}
+													</span>
+												</div>
 											</td>
 											<td className="px-6 py-4 whitespace-nowrap">
 												{review.name}

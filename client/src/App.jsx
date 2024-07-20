@@ -23,7 +23,6 @@ function App() {
 			})
 			.then((res) => {
 				const userData = res.data;
-				console.log(userData);
 				setUser(userData);
 				setIsLoggedIn(true); // Assuming the API returns user data if logged in
 			})

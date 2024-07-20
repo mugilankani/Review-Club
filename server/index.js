@@ -43,18 +43,12 @@ app.get("/auth", authenticate, async (req, res) => {
 	res.json(user);
 });
 
-// routes
-app.get("/login", (req, res) => {
-	res.send("Login page");
-});
-
 // Fetch all posts
 app.get("/allposts", async (req, res) => {
 	try {
 		const posts = await prisma.review.findMany({
 			include: { user: true },
 		});
-		console.log(posts);
 		res.json(posts);
 	} catch (error) {
 		console.error("Error fetching posts:", error);
@@ -65,8 +59,6 @@ app.get("/allposts", async (req, res) => {
 // Create a new post
 app.post("/post", upload.array("images", 4), authenticate, async (req, res) => {
 	const userId = req.userId; // Assume userId is set correctly by middleware
-
-	console.log("User ID:", userId);
 
 	const { name, content, rating, date, edited, likes, comments } = req.body;
 	const images = req.files
@@ -264,8 +256,6 @@ app.get("/admin/reviews", async (req, res) => {
 
 		const total = await prisma.review.count({ where });
 
-		console.log("Reviews:", reviews);
-		
 		res.json({
 			reviews,
 			currentPage: Number(page),

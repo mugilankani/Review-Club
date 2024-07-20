@@ -3,7 +3,6 @@ import axios from "axios";
 
 export default function LoginPage() {
 	const handleGoogleLogin = () => {
-		console.log("Initiating Google OAuth login");
 		axios.get(`http://localhost:3000/auth/google`).then((response) => {
 			window.location.href = response.data.url;
 		});

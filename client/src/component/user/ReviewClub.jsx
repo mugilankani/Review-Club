@@ -8,7 +8,6 @@ import {
 	MessageSquare,
 	Flag,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 
 // Sample data
@@ -24,19 +23,20 @@ export default function ReviewClub() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [posts, setPosts] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		// Function to fetch data
 		const fetchPosts = async () => {
 			try {
-				const response = axios.get("/allposts");
-				if (Array.isArray(response.data)) {
-					setPosts(response.data);
-				} else {
-					console.error("Unexpected response format:", response.data);
-				}
+				const response = await axios.get(
+					"http://localhost:3000/allposts"
+				);
+				setPosts(response.data);
 			} catch (error) {
 				console.error("Error fetching posts:", error);
+			} finally {
+				setLoading(false);
 			}
 		};
 
@@ -118,7 +118,9 @@ export default function ReviewClub() {
 
 						{/* Reviews */}
 						<div className="space-y-6">
-							{Array.isArray(posts) ? (
+							{loading ? (
+								<p>Loading reviews...</p>
+							) : posts.length ? (
 								posts.map((review) => (
 									<div
 										key={review.id}
@@ -127,13 +129,16 @@ export default function ReviewClub() {
 										<div className="flex items-center justify-between mb-4">
 											<div className="flex items-center">
 												<img
-													src="/api/placeholder/40/40"
-													alt={`${review.user}'s avatar`}
+													src={
+														review.user
+															.displayPicture
+													}
+													alt={`${review.user.name}'s avatar`}
 													className="w-10 h-10 rounded-full mr-3"
 												/>
 												<div>
 													<h3 className="font-semibold">
-														{review.user}
+														{review.user.name}
 													</h3>
 													<p className="text-sm text-gray-500">
 														{review.name}
