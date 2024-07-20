@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Menu, X, Filter, ThumbsUp, MessageSquare, Flag } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Sample data
 const sampleReviews = [
@@ -39,7 +40,7 @@ export default function ReviewClub() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-2xl font-bold text-indigo-600">Review Club</h1>
+              <Link to='/' className="text-2xl font-bold text-indigo-600 cursor-pointer">Review Club</Link>
             </div>
             <div className="flex items-center">
               <button
@@ -48,8 +49,8 @@ export default function ReviewClub() {
               >
                 {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <div className="hidden lg:ml-6 lg:flex lg:items-center">
-                <div className="flex-shrink-0">
+              <Link to="/dashboard" className="hidden lg:ml-6 lg:flex lg:items-center">
+                <div className="flex-shrink-0 ">
                   <img
                     className="h-10 w-10 rounded-full"
                     src="/api/placeholder/40/40"
@@ -57,7 +58,7 @@ export default function ReviewClub() {
                   />
                 </div>
                 <span className="ml-3 text-gray-700">John Doe</span>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

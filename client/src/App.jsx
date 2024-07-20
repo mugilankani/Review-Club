@@ -7,7 +7,7 @@ import UserDashboard from './component/user/UserDashboard';
 import CreateReviewForm from './component/user/CreateReviewForm';
 
 function App() {
-  const [count, setCount] = useState(0);
+
   const [reviews, setReviews] = useState([]);
 
   return (
@@ -18,6 +18,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<UserDashboard reviews={reviews} setReviews={setReviews} />} />
         <Route path="/create-review" element={<CreateReviewForm reviews={reviews} setReviews={setReviews} />} />
+
       </Routes>
     </>
   );
