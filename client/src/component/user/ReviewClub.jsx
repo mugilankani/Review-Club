@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Search,
 	Menu,
@@ -9,34 +9,9 @@ import {
 	Flag,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App";
+import axios from "axios";
 
-const sampleReviews = [
-	{
-		id: 1,
-		user: "John Doe",
-		name: "Web Development Bootcamp",
-		content:
-			"This name did not deliver on its promises. The curriculum was outdated and the support was lacking.",
-		images: ["/api/placeholder/400/300"],
-		approved: true,
-		likes: 24,
-		comments: 5,
-	},
-	{
-		id: 2,
-		user: "Jane Smith",
-		name: "Data Science Masterclass",
-		content:
-			"Great name content, but the pacing was too fast. Not suitable for beginners as advertised.",
-		images: ["/api/placeholder/400/300", "/api/placeholder/400/300"],
-		approved: false,
-		likes: 12,
-		comments: 3,
-	},
-	// Add more sample reviews here
-];
-
+// Sample data
 const categories = [
 	"Web Development",
 	"Data Science",
@@ -46,10 +21,27 @@ const categories = [
 ];
 
 export default function ReviewClub() {
-	const [selectedCategory, setSelectedCategory] = useState("All");
 	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const [selectedCategory, setSelectedCategory] = useState("All");
+	const [posts, setPosts] = useState([]);
 
-	const { user, isLoggedIn } = useContext(UserContext);
+	useEffect(() => {
+		// Function to fetch data
+		const fetchPosts = async () => {
+			try {
+				const response = axios.get("/allposts");
+				if (Array.isArray(response.data)) {
+					setPosts(response.data);
+				} else {
+					console.error("Unexpected response format:", response.data);
+				}
+			} catch (error) {
+				console.error("Error fetching posts:", error);
+			}
+		};
+
+		fetchPosts();
+	}, []);
 
 	return (
 		<div className="min-h-screen bg-gray-100">
@@ -126,68 +118,75 @@ export default function ReviewClub() {
 
 						{/* Reviews */}
 						<div className="space-y-6">
-							{sampleReviews.map((review) => (
-								<div
-									key={review.id}
-									className="bg-white shadow-md rounded-lg p-6"
-								>
-									<div className="flex items-center justify-between mb-4">
-										<div className="flex items-center">
-											<img
-												src="/api/placeholder/40/40"
-												alt={`${review.user}'s avatar`}
-												className="w-10 h-10 rounded-full mr-3"
-											/>
-											<div>
-												<h3 className="font-semibold">
-													{review.user}
-												</h3>
-												<p className="text-sm text-gray-500">
-													{review.name}
-												</p>
+							{Array.isArray(posts) ? (
+								posts.map((review) => (
+									<div
+										key={review.id}
+										className="bg-white shadow-md rounded-lg p-6"
+									>
+										<div className="flex items-center justify-between mb-4">
+											<div className="flex items-center">
+												<img
+													src="/api/placeholder/40/40"
+													alt={`${review.user}'s avatar`}
+													className="w-10 h-10 rounded-full mr-3"
+												/>
+												<div>
+													<h3 className="font-semibold">
+														{review.user}
+													</h3>
+													<p className="text-sm text-gray-500">
+														{review.name}
+													</p>
+												</div>
 											</div>
+											{review.approved && (
+												<span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+													Admin Approved
+												</span>
+											)}
 										</div>
-										{review.approved && (
-											<span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-												Admin Approved
-											</span>
-										)}
+										<p className="mb-4">{review.content}</p>
+										<div className="flex space-x-2 mb-4">
+											{review.images.map((img, index) => (
+												<img
+													key={index}
+													src={img}
+													alt={`Review image ${
+														index + 1
+													}`}
+													className="w-1/2 rounded-lg"
+												/>
+											))}
+										</div>
+										<div className="flex items-center space-x-4">
+											<button className="flex items-center text-gray-600 hover:text-indigo-600">
+												<ThumbsUp
+													size={20}
+													className="mr-1"
+												/>
+												<span>{review.likes}</span>
+											</button>
+											<button className="flex items-center text-gray-600 hover:text-indigo-600">
+												<MessageSquare
+													size={20}
+													className="mr-1"
+												/>
+												<span>{review.comments}</span>
+											</button>
+											<button className="flex items-center text-gray-600 hover:text-red-600">
+												<Flag
+													size={20}
+													className="mr-1"
+												/>
+												<span>Report</span>
+											</button>
+										</div>
 									</div>
-									<p className="mb-4">{review.content}</p>
-									<div className="flex space-x-2 mb-4">
-										{review.images.map((img, index) => (
-											<img
-												key={index}
-												src={img}
-												alt={`Review image ${
-													index + 1
-												}`}
-												className="w-1/2 rounded-lg"
-											/>
-										))}
-									</div>
-									<div className="flex items-center space-x-4">
-										<button className="flex items-center text-gray-600 hover:text-indigo-600">
-											<ThumbsUp
-												size={20}
-												className="mr-1"
-											/>
-											<span>{review.likes}</span>
-										</button>
-										<button className="flex items-center text-gray-600 hover:text-indigo-600">
-											<MessageSquare
-												size={20}
-												className="mr-1"
-											/>
-											<span>{review.comments}</span>
-										</button>
-										<button className="flex items-center text-gray-600 hover:text-red-600">
-											<Flag size={20} className="mr-1" />
-											<span>Report</span>
-										</button>
-									</div>
-								</div>
-							))}
+								))
+							) : (
+								<p>No reviews available.</p>
+							)}
 						</div>
 					</div>
 				</div>
