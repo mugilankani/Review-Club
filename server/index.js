@@ -6,8 +6,8 @@ const multer = require('multer');
 
 const logger = require("./middleware/requestLogger");
 const {
-	generateGoogleOauthLink,
-	googleOauthCallback,
+  generateGoogleOauthLink,
+  googleOauthCallback,
 } = require("./googleAuth");
 const authenticate = require("./middleware/authenticate");
 
@@ -19,11 +19,11 @@ const prisma = new PrismaClient();
 
 // Middleware
 app.use(cors());
+app.use(express.json());
 app.use(logger);
 
 app.get("/auth/google", generateGoogleOauthLink);
 app.get("/auth/google/callback", googleOauthCallback);
-
 // routes
 app.get("/login", (req, res) => {
 	res.send("Login page");
@@ -149,6 +149,149 @@ app.delete("/admin/post/:id", async (req, res) => {
 		res.status(500).send("Error deleting post");
 	}
 });
+
+app.get("/admin/users", async (req, res) => {
+	try {
+	  const users = await prisma.user.findMany();
+	  console.log(users);
+	  res.json(users);
+	} catch (error) {
+	  console.error("Error fetching users:", error);
+	  res.status(500).json({ message: "Error fetching users" });
+	}
+  });
+  
+  // Fetch user by ID
+  app.get("/admin/users/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+	  const user = await prisma.user.findUnique({
+		where: { id },
+		include: { reviews: true },
+	  });
+	  if (user) {
+		res.json(user);
+	  } else {
+		res.status(404).json({ message: "User not found" });
+	  }
+	} catch (error) {
+	  console.error("Error fetching user:", error);
+	  res.status(500).json({ message: "Error fetching user" });
+	}
+  });
+  
+  // Update user
+  app.put("/admin/users/:id", async (req, res) => {
+	const { id } = req.params;
+	const { name, email, bio, avatar } = req.body;
+	try {
+	  const updatedUser = await prisma.user.update({
+		where: { id },
+		data: { name, email, bio, avatar },
+	  });
+	  res.json(updatedUser);
+	} catch (error) {
+	  console.error("Error updating user:", error);
+	  res.status(500).json({ message: "Error updating user" });
+	}
+  });
+  
+  // Delete user
+  app.delete("/admin/users/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+	  await prisma.user.delete({
+		where: { id },
+	  });
+	  res.status(204).send();
+	} catch (error) {
+	  console.error("Error deleting user:", error);
+	  res.status(500).json({ message: "Error deleting user" });
+	}
+  });
+  
+  // Fetch all reviews (with pagination)
+  app.get("/admin/reviews", async (req, res) => {
+	const { page = 1, limit = 10, status } = req.query;
+	const skip = (page - 1) * limit;
+  
+	try {
+	  const where = {};
+	  if (status) {
+		where.approved = status === 'approved';
+	  }
+  
+	  const reviews = await prisma.review.findMany({
+		where,
+		include: { user: true },
+		skip: Number(skip),
+		take: Number(limit),
+		orderBy: { createdAt: 'desc' },
+	  });
+  
+	  const total = await prisma.review.count({ where });
+  
+	  res.json({
+		reviews,
+		currentPage: Number(page),
+		totalPages: Math.ceil(total / limit),
+		totalReviews: total,
+	  });
+	} catch (error) {
+	  console.error("Error fetching reviews:", error);
+	  res.status(500).json({ message: "Error fetching reviews" });
+	}
+  });
+  
+  // Approve a review
+  app.put("/admin/reviews/:id/approve", async (req, res) => {
+	const { id } = req.params;
+	try {
+	  const updatedReview = await prisma.review.update({
+		where: { id },
+		data: { approved: true },
+	  });
+	  res.json(updatedReview);
+	} catch (error) {
+	  console.error("Error approving review:", error);
+	  res.status(500).json({ message: "Error approving review" });
+	}
+  });
+  
+  // Reject a review
+  app.put("/admin/reviews/:id/reject", async (req, res) => {
+	const { id } = req.params;
+	try {
+	  const updatedReview = await prisma.review.update({
+		where: { id },
+		data: { approved: false },
+	  });
+	  res.json(updatedReview);
+	} catch (error) {
+	  console.error("Error rejecting review:", error);
+	  res.status(500).json({ message: "Error rejecting review" });
+	}
+  });
+  
+  // Delete a review
+  app.delete("/admin/reviews/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+	  await prisma.review.delete({
+		where: { id },
+	  });
+	  res.status(204).send();
+	} catch (error) {
+	  console.error("Error deleting review:", error);
+	  res.status(500).json({ message: "Error deleting review" });
+	}
+  });
+  
+  // Fetch analytics data
+  app.get("/admin/analytics", async (req, res) => {
+	res.json({ message: "Test endpoint is working" });
+  });
+  
 
 // Start the server
 app.listen(port, () => {
