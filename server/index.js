@@ -1,7 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
 const logger = require("./middleware/requestLogger");
+
+const {
+	generateGoogleOauthLink,
+	googleOauthCallback,
+} = require("./googleAuth");
+const authenticate = require("./middleware/authenticate");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,26 +19,126 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(logger);
 
-// Sample route to fetch users
-app.get("/users", async (req, res) => {
+app.get("/auth/google", generateGoogleOauthLink);
+app.get("/auth/google/callback", googleOauthCallback);
+
+// routes
+app.get("/login", (req, res) => {
+	res.send("Login page");
+});
+
+// Fetch all posts
+app.get("/allposts", async (req, res) => {
 	try {
-		const users = await prisma.user.findMany();
-		res.json(users);
+		const posts = await prisma.review.findMany({
+			include: { user: true },
+		});
+		res.json(posts);
 	} catch (error) {
-		res.status(500).send("Error fetching users");
+		console.error("Error fetching posts:", error);
+		res.status(500).send("Error fetching posts");
 	}
 });
 
-// Sample route to add a new user
-app.post("/users", express.json(), async (req, res) => {
-	const { name, email } = req.body;
+// Create a new post
+app.post("/post", async (req, res) => {
+	const { userId, name, content, images } = req.body;
+
+	// Validate the input
+	if (!userId || !name || !content) {
+		return res.status(400).send("User ID, name, and content are required");
+	}
+
 	try {
-		const newUser = await prisma.user.create({
-			data: { name, email },
+		const newPost = await prisma.review.create({
+			data: {
+				userId,
+				name,
+				content,
+				images: images || [],
+			},
 		});
-		res.json(newUser);
+		res.status(201).json(newPost); // Respond with the created post and status code 201 (Created)
 	} catch (error) {
-		res.status(500).send("Error creating user");
+		console.error("Error creating post:", error);
+		res.status(500).send("Error creating post");
+	}
+});
+
+// Fetch a single post by ID
+app.get("/post/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+		const post = await prisma.review.findUnique({
+			where: { id },
+			include: { user: true },
+		});
+		if (post) {
+			res.json(post);
+		} else {
+			res.status(404).send("Post not found");
+		}
+	} catch (error) {
+		console.error("Error fetching post:", error);
+		res.status(500).send("Error fetching post");
+	}
+});
+
+// Delete a post by ID
+app.delete("/post/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+		await prisma.review.delete({
+			where: { id },
+		});
+		res.status(204).send(); // No content, successful deletion
+	} catch (error) {
+		console.error("Error deleting post:", error);
+		res.status(500).send("Error deleting post");
+	}
+});
+
+// Approve a post by ID (Admin functionality)
+app.get("/admin/post/approve/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+		const post = await prisma.review.update({
+			where: { id },
+			data: { approved: true },
+		});
+		res.json(post);
+	} catch (error) {
+		console.error("Error approving post:", error);
+		res.status(500).send("Error approving post");
+	}
+});
+
+// Reject a post by ID (Admin functionality)
+app.get("/admin/post/reject/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+		const post = await prisma.review.update({
+			where: { id },
+			data: { approved: false },
+		});
+		res.json(post);
+	} catch (error) {
+		console.error("Error rejecting post:", error);
+		res.status(500).send("Error rejecting post");
+	}
+});
+
+// Delete a post by ID (Admin functionality)
+app.delete("/admin/post/:id", async (req, res) => {
+	const { id } = req.params;
+	try {
+		await prisma.review.delete({
+			where: { id },
+		});
+		res.status(204).send();
+	} catch (error) {
+		console.error("Error deleting post:", error);
+		res.status(500).send("Error deleting post");
 	}
 });
 

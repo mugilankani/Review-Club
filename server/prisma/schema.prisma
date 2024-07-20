@@ -15,13 +15,15 @@ generator client {
 
 // Define your data models
 model User {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
-  email      String   @unique
-  bio        String?
-  avatar     String?
-  joinedDate DateTime
-  reviews    Review[]
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String   @unique
+  displayPicture String?
+  provider       String
+  bio            String?
+  avatar         String?
+  joinedDate     DateTime @default(now())
+  reviews        Review[]
 }
 
 model Review {
@@ -31,7 +33,8 @@ model Review {
   name      String
   content   String
   images    String[]
-  approved  Boolean
-  likes     Int
-  comments  Int
+  approved  Boolean  @default(false)
+  likes     Int      @default(0)
+  comments  Int      @default(0)
+  createdAt DateTime @default(now())
 }
