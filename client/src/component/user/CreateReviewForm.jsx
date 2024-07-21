@@ -1,7 +1,10 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
+import { imageDB } from "../../firebase/config";
+import { getDownloadURL, ref,uploadBytes } from "firebase/storage"
+import { v4 } from 'uuid';
 
 // Validation schema
 const validationSchema = Yup.object({
@@ -15,34 +18,40 @@ const validationSchema = Yup.object({
 
 function CreateReviewForm({ reviews, setReviews }) {
 	const [imagePreviews, setImagePreviews] = useState([]);
+	const [files,setFiles] = useState()
 
-	const handleFileChange = (event, setFieldValue) => {
+	const handleFileChange = (event) => {
 		const files = Array.from(event.target.files).slice(0, 4); // Limit to 4 files
-		setFieldValue("images", files);
-
+		setFiles(files)
 		const previews = files.map((file) => URL.createObjectURL(file));
 		setImagePreviews(previews);
 	};
+	
+	const handleImageUpload = async (setFieldValue,values) => {
+		const imageLinks = []
+		if(!files){
+			throw new Error("No image uploaded")
+		}
+		for(const file of files){
+			const imageRef = ref(imageDB,`reviews/${v4()}`)
+			await uploadBytes(imageRef, file)
+			const url = await getDownloadURL(imageRef)
+			imageLinks.push(url)
+		}
+		console.log(imageLinks)	
+		return imageLinks
+	}
 
 	const handleSubmit = async (values, { setSubmitting, setErrors }) => {
-		const formData = new FormData();
-		formData.append("name", values.name);
-		formData.append("content", values.content);
-		formData.append("rating", values.rating);
-
-		values.images.forEach((image) => {
-			formData.append("images", image);
-		});
+		const imageLinks = await handleImageUpload()
+		const updatedValues = {...values,images: imageLinks}
+		console.log(updatedValues)
 
 		try {
 			const response = await axios.post(
 				"http://localhost:3000/post",
-				formData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
-					withCredentials: true,
+				updatedValues,{
+					withCredentials: true
 				}
 			);
 
@@ -53,6 +62,7 @@ function CreateReviewForm({ reviews, setReviews }) {
 			// Clear the form
 			setSubmitting(false);
 			setImagePreviews([]);
+
 		} catch (error) {
 			console.error("Error submitting review:", error);
 			setErrors({ submit: "Failed to submit review. Please try again." });
@@ -71,12 +81,12 @@ function CreateReviewForm({ reviews, setReviews }) {
 						name: "",
 						content: "",
 						rating: 0,
-						images: [],
+						images: []
 					}}
 					validationSchema={validationSchema}
 					onSubmit={handleSubmit}
 				>
-					{({ setFieldValue, isSubmitting, errors }) => (
+					{({ isSubmitting, errors }) => (
 						<Form>
 							<div className="mb-4">
 								<label
@@ -146,7 +156,7 @@ function CreateReviewForm({ reviews, setReviews }) {
 									accept="image/*"
 									multiple
 									onChange={(event) =>
-										handleFileChange(event, setFieldValue)
+										handleFileChange(event)
 									}
 									className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 								/>

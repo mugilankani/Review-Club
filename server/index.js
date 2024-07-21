@@ -60,10 +60,7 @@ app.get("/allposts", async (req, res) => {
 app.post("/post", upload.array("images", 4), authenticate, async (req, res) => {
 	const userId = req.userId; // Assume userId is set correctly by middleware
 
-	const { name, content, rating, date, edited, likes, comments } = req.body;
-	const images = req.files
-		? req.files.map((file) => file.buffer.toString("base64"))
-		: [];
+	const { name, content, rating, date, edited, likes, comments, images } = req.body;
 
 	// Validate the input
 	if (!name || !content || rating == null) {
