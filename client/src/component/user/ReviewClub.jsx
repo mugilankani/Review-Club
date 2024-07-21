@@ -33,6 +33,7 @@ export default function ReviewClub() {
 					"http://localhost:3000/allposts"
 				);
 				setPosts(response.data);
+				console.log(response.data)
 			} catch (error) {
 				console.error("Error fetching posts:", error);
 			} finally {

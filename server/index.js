@@ -43,6 +43,29 @@ app.get("/auth", authenticate, async (req, res) => {
 	res.json(user);
 });
 
+
+app.get('/user-posts', async (req, res) => {
+	try {
+	  // Get the user ID from the query parameter
+	  const userId = req.query.userId;
+	  
+	  if (!userId) {
+		return res.status(400).json({ message: "User ID is required" });
+	  }
+  
+	  // Find posts by the user
+	  const posts = await prisma.review.findMany({
+		where: {
+		  userId: userId,
+		}
+	  });
+	  
+	  res.json(posts);
+	} catch (error) {
+	  console.error("Error in /user-posts:", error.message);
+	  res.status(500).send('Server Error');
+	}
+  });
 // Fetch all posts
 app.get("/allposts", async (req, res) => {
 	try {
@@ -115,63 +138,11 @@ app.get("/post/:id", async (req, res) => {
 	}
 });
 
-// Delete a post by ID
-app.delete("/post/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		await prisma.review.delete({
-			where: { id },
-		});
-		res.status(204).send(); // No content, successful deletion
-	} catch (error) {
-		console.error("Error deleting post:", error);
-		res.status(500).send("Error deleting post");
-	}
-});
 
-// Approve a post by ID (Admin functionality)
-app.get("/admin/post/approve/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		const post = await prisma.review.update({
-			where: { id },
-			data: { approved: true },
-		});
-		res.json(post);
-	} catch (error) {
-		console.error("Error approving post:", error);
-		res.status(500).send("Error approving post");
-	}
-});
 
-// Reject a post by ID (Admin functionality)
-app.get("/admin/post/reject/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		const post = await prisma.review.update({
-			where: { id },
-			data: { approved: false },
-		});
-		res.json(post);
-	} catch (error) {
-		console.error("Error rejecting post:", error);
-		res.status(500).send("Error rejecting post");
-	}
-});
 
-// Delete a post by ID (Admin functionality)
-app.delete("/admin/post/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		await prisma.review.delete({
-			where: { id },
-		});
-		res.status(204).send();
-	} catch (error) {
-		console.error("Error deleting post:", error);
-		res.status(500).send("Error deleting post");
-	}
-});
+
+
 
 app.get("/admin/users", async (req, res) => {
 	try {
