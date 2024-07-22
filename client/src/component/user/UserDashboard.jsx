@@ -220,16 +220,7 @@ function UserDashboard() {
                     </div>
                   )}
                   
-                  <div className="flex items-center mt-4">
-                    <Star size={16} className="text-yellow-500 mr-1" />
-                    <span>{review.rating}</span>
-                    <Clock size={16} className="text-gray-500 ml-4 mr-1" />
-                    <span>{formatDate(review.date)}</span>
-                    <Eye size={16} className="text-gray-500 ml-4 mr-1" />
-                    <span>{review.likes}</span>
-                    <MessageCircle size={16} className="text-gray-500 ml-4 mr-1" />
-                    <span>{review.comments}</span>
-                  </div>
+                
                   <div className="flex justify-end mt-4">
                     <button
                       onClick={() => handleReviewEdit(review.id)}

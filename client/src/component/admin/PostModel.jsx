@@ -51,20 +51,7 @@ const PostModal = ({ postId, onClose, onApprove, onReject, onDelete }) => {
               ))}
             </div>
           )}
-          <div className="flex items-center space-x-4 text-gray-500">
-            <div className="flex items-center">
-              <ThumbsUp size={18} className="mr-1" />
-              <span>{post.likes}</span>
-            </div>
-            <div className="flex items-center">
-              <MessageSquare size={18} className="mr-1" />
-              <span>{post.comments}</span>
-            </div>
-            <div className="flex items-center">
-              <Star size={18} className="mr-1" />
-              <span>{post.rating}</span>
-            </div>
-          </div>
+          
         </div>
         <div className="p-4 border-t flex justify-end space-x-2">
           {!post.approved && (

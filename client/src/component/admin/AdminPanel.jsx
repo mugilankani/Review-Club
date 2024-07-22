@@ -8,7 +8,7 @@ import {
   Search,
   Eye,
 } from "lucide-react";
-import PostModal from "./PostModel"; // Make sure to import the PostModal component
+import PostModal from "./PostModel"; 
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState("users");

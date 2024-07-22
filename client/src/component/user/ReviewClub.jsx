@@ -53,38 +53,7 @@ export default function ReviewClub() {
 							sidebarOpen ? "block" : "hidden"
 						} lg:block lg:w-64 w-full mr-8`}
 					>
-						<div className="bg-white shadow-md rounded-lg p-4">
-							<h2 className="text-lg font-semibold mb-4">
-								Categories
-							</h2>
-							<ul>
-								<li
-									className={`cursor-pointer py-2 px-3 rounded-md ${
-										selectedCategory === "All"
-											? "bg-indigo-100 text-indigo-800"
-											: "hover:bg-gray-100"
-									}`}
-									onClick={() => setSelectedCategory("All")}
-								>
-									All
-								</li>
-								{categories.map((category) => (
-									<li
-										key={category}
-										className={`cursor-pointer py-2 px-3 rounded-md ${
-											selectedCategory === category
-												? "bg-indigo-100 text-indigo-800"
-												: "hover:bg-gray-100"
-										}`}
-										onClick={() =>
-											setSelectedCategory(category)
-										}
-									>
-										{category}
-									</li>
-								))}
-							</ul>
-						</div>
+						
 					</div>
 
 					{/* Feed */}
@@ -118,7 +87,7 @@ export default function ReviewClub() {
 						</div>
 
 						{/* Reviews */}
-						<div className="space-y-6">
+						<div className="space-y-6 h-[90dvh] overflow-y-auto">
 							{loading ? (
 								<p>Loading reviews...</p>
 							) : posts.length ? (
@@ -165,29 +134,7 @@ export default function ReviewClub() {
 												/>
 											))}
 										</div>
-										<div className="flex items-center space-x-4">
-											<button className="flex items-center text-gray-600 hover:text-indigo-600">
-												<ThumbsUp
-													size={20}
-													className="mr-1"
-												/>
-												<span>{review.likes}</span>
-											</button>
-											<button className="flex items-center text-gray-600 hover:text-indigo-600">
-												<MessageSquare
-													size={20}
-													className="mr-1"
-												/>
-												<span>{review.comments}</span>
-											</button>
-											<button className="flex items-center text-gray-600 hover:text-red-600">
-												<Flag
-													size={20}
-													className="mr-1"
-												/>
-												<span>Report</span>
-											</button>
-										</div>
+										
 									</div>
 								))
 							) : (

@@ -12,59 +12,50 @@ import Navbar from "./component/Navbar";
 export const UserContext = createContext();
 
 function App() {
-	const [user, setUser] = useState(null); // Store user data
-	const [isLoggedIn, setIsLoggedIn] = useState(false); // Store login status
-	const [reviews, setReviews] = useState([]);
+  const [user, setUser] = useState(null); // Store user data
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Store login status
+  const [reviews, setReviews] = useState([]);
 
-	useEffect(() => {
-		axios
-			.get(`${import.meta.env.VITE_API_URL}/auth`, {
-				withCredentials: true,
-			})
-			.then((res) => {
-				const userData = res.data;
-				setUser(userData);
-				setIsLoggedIn(true); // Assuming the API returns user data if logged in
-			})
-			.catch(() => {
-				setIsLoggedIn(false); // If error occurs, assume user is not logged in
-			});
-	}, []);
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/auth`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        const userData = res.data;
+        setUser(userData);
+        setIsLoggedIn(true); // Assuming the API returns user data if logged in
+      })
+      .catch(() => {
+        setIsLoggedIn(false); // If error occurs, assume user is not logged in
+      });
+  }, []);
 
-	return (
-		<UserContext.Provider
-			value={{ user, isLoggedIn, setUser, setIsLoggedIn }}
-		>
-			<Navbar />
-			<Routes>
-				<Route path="/" element={<ReviewClub />} />
-				<Route path="/admin" element={<AdminPanel />} />
-				<Route path="/login" element={<LoginPage />} />
-				<Route
-					path="/dashboard"
-					element={
-						<UserDashboard
-							reviews={reviews}
-							setReviews={setReviews}
-						/>
-					}
-				/>
-				<Route
-					path="/create-review"
-					element={
-						<CreateReviewForm
-							reviews={reviews}
-							setReviews={setReviews}
-						/>
-					}
-				/>
-				<Route
-					path="/auth/success"
-					element={<Link to="/">Go to home</Link>}
-				/>
-			</Routes>
-		</UserContext.Provider>
-	);
+  return (
+    <UserContext.Provider value={{ user, isLoggedIn, setUser, setIsLoggedIn }}>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<ReviewClub />} />
+        {user?.role === "admin" ? (
+          <Route path="/admin" element={<AdminPanel />} />
+        ) : (
+          <Route path="/admin" element={<h1 className=" flex w-full h-screen justify-center items-center font-bold text-red-700 text-5xl">Your not admin....!</h1>} />
+        )}
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/dashboard"
+          element={<UserDashboard reviews={reviews} setReviews={setReviews} />}
+        />
+        <Route
+          path="/create-review"
+          element={
+            <CreateReviewForm reviews={reviews} setReviews={setReviews} />
+          }
+        />
+        <Route path="/auth/success" element={<Link to="/">Go to home</Link>} />
+      </Routes>
+    </UserContext.Provider>
+  );
 }
 
 export default App;
