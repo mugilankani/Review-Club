@@ -25,19 +25,19 @@ export default function AdminPanel() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/admin/users")
+      .get(`${import.meta.env.VITE_API_URL}/admin/users`)
       .then((response) => setUsers(response.data))
       .catch((error) => console.error("Error fetching users:", error));
 
     axios
-      .get("http://localhost:3000/admin/reviews")
+      .get(`${import.meta.env.VITE_API_URL}/admin/reviews`)
       .then((response) => {
         setReviews(response.data.reviews);
       })
       .catch((error) => console.error("Error fetching reviews:", error));
 
     axios
-      .get("http://localhost:3000/admin/analytics")
+      .get(`${import.meta.env.VITE_API_URL}/admin/analytics`)
       .then((response) => setAnalytics(response.data))
       .catch((error) => console.error("Error fetching analytics:", error));
   }, []);
@@ -58,7 +58,7 @@ export default function AdminPanel() {
   );
   const handleApproveReview = (id) => {
     axios
-      .put(`http://localhost:3000/admin/reviews/${id}/approve`)
+      .put(`${import.meta.env.VITE_API_URL}/admin/reviews/${id}/approve`)
       .then((response) => {
         setReviews(
           reviews.map((review) => (review.id === id ? response.data : review))
@@ -70,7 +70,7 @@ export default function AdminPanel() {
 
   const handleRejectReview = (id) => {
     axios
-      .put(`http://localhost:3000/admin/reviews/${id}/reject`)
+      .put(`${import.meta.env.VITE_API_URL}/admin/reviews/${id}/reject`)
       .then((response) => {
         setReviews(
           reviews.map((review) => (review.id === id ? response.data : review))
@@ -82,7 +82,7 @@ export default function AdminPanel() {
 
   const handleDeleteReview = (id) => {
     axios
-      .delete(`http://localhost:3000/admin/reviews/${id}`)
+      .delete(`${import.meta.env.VITE_API_URL}/admin/reviews/${id}`)
       .then(() => {
         setReviews(reviews.filter((review) => review.id !== id));
         setSelectedPostId(null);
@@ -182,9 +182,7 @@ export default function AdminPanel() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Joined Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
+                   
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -199,14 +197,7 @@ export default function AdminPanel() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {new Date(user.joinedDate).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-indigo-600 hover:text-indigo-900 mr-2">
-                          Edit
-                        </button>
-                        <button className="text-red-600 hover:text-red-900">
-                          Delete
-                        </button>
-                      </td>
+                      
                     </tr>
                   ))}
                 </tbody>

@@ -39,7 +39,7 @@ function App() {
         {user?.role === "admin" ? (
           <Route path="/admin" element={<AdminPanel />} />
         ) : (
-          <Route path="/admin" element={<h1 className=" flex w-full h-screen justify-center items-center font-bold text-red-700 text-5xl">Your not admin....!</h1>} />
+          <Route path="/admin" element={<h1 className=" flex w-full h-screen justify-center items-center font-bold text-red-700 text-5xl">You are not an admin :)</h1>} />
         )}
         <Route path="/login" element={<LoginPage />} />
         <Route
@@ -52,7 +52,7 @@ function App() {
             <CreateReviewForm reviews={reviews} setReviews={setReviews} />
           }
         />
-        <Route path="/auth/success" element={<Link to="/">Go to home</Link>} />
+        <Route path="/auth/success" element={<Link to="/" className="flex w-full h-screen justify-center items-center font-bold text-red-700 text-5xl">  Go to home</Link>} />
       </Routes>
     </UserContext.Provider>
   );

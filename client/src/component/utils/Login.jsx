@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default function LoginPage() {
 	const handleGoogleLogin = () => {
-		axios.get(`http://localhost:3000/auth/google`).then((response) => {
+		axios.get(`/auth/google`).then((response) => {
 			window.location.href = response.data.url;
 		});
 	};

@@ -39,7 +39,7 @@ function UserDashboard() {
         }
 
         const response = await axios.get(
-          `http://localhost:3000/user-posts?userId=${user.id}`
+          `${import.meta.env.VITE_API_URL}/user-posts?userId=${user.id}`
         );
         setReviews(response.data);
       } catch (error) {

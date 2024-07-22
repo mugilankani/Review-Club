@@ -30,7 +30,7 @@ export default function ReviewClub() {
 		const fetchPosts = async () => {
 			try {
 				const response = await axios.get(
-					"http://localhost:3000/allposts"
+					`${import.meta.env.VITE_API_URL}/allposts`
 				);
 				setPosts(response.data);
 				console.log(response.data)

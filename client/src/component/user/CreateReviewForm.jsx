@@ -49,7 +49,7 @@ function CreateReviewForm({ reviews, setReviews }) {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:3000/post",
+				`${import.meta.env.VITE_API_URL}/post`,
 				updatedValues,{
 					withCredentials: true
 				}
