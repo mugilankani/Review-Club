@@ -110,9 +110,7 @@ export default function ReviewClub() {
 													<h3 className="font-semibold">
 														{review.user.name}
 													</h3>
-													<p className="text-sm text-gray-500">
-														{review.name}
-													</p>
+													
 												</div>
 											</div>
 											{review.approved && (
@@ -121,8 +119,13 @@ export default function ReviewClub() {
 												</span>
 											)}
 										</div>
+										<h1 className="text-xl font-bold">
+														{review.name}
+													</h1>
+													<br />
 										<p className="mb-4">{review.content}</p>
 										<div className="flex space-x-2 mb-4">
+											
 											{review.images.map((img, index) => (
 												<img
 													key={index}

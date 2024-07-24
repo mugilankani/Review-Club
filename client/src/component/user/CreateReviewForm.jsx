@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { imageDB } from "../../firebase/config";
 import { getDownloadURL, ref,uploadBytes } from "firebase/storage"
 import { v4 } from 'uuid';
-
+import { useNavigate } from "react-router-dom";
 // Validation schema
 const validationSchema = Yup.object({
 	name: Yup.string().required("Name is required"),
@@ -17,6 +17,7 @@ const validationSchema = Yup.object({
 });
 
 function CreateReviewForm({ reviews, setReviews }) {
+	const navigate = useNavigate()
 	const [imagePreviews, setImagePreviews] = useState([]);
 	const [files,setFiles] = useState()
 
@@ -62,6 +63,7 @@ function CreateReviewForm({ reviews, setReviews }) {
 			// Clear the form
 			setSubmitting(false);
 			setImagePreviews([]);
+			navigate("/dashboard")
 
 		} catch (error) {
 			console.error("Error submitting review:", error);
