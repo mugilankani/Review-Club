@@ -19,11 +19,7 @@ Review Club is a platform designed to help users find, share, and discuss review
 3. [Anam-Ashraf7](https://github.com/Anam-Ashraf7)
 
 ## Link to Product Walkthrough
-<img width="900" alt="Screenshot 2024-07-24 at 20 54 13" src="https://github.com/user-attachments/assets/095f7627-a73c-4d8f-80e1-7597c2d52ba8">
-<img width="900" alt="Screenshot 2024-07-24 at 20 54 32" src="https://github.com/user-attachments/assets/1ed289b1-2078-4c17-8f81-9bc8261cfb9b">
-<img width="900" alt="Screenshot 2024-07-24 at 20 51 46" src="https://github.com/user-attachments/assets/382caab9-f5de-4863-8c11-3412e2e2bad9">
-
-
+1. https://docs.google.com/document/d/1oXrGfIhKFtzWUDhjcR3WW3nRGKKHXLdtIAP5h-TyJIE/edit?usp=sharing
 
 ## How It Works
 
