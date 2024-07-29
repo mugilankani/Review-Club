@@ -7,9 +7,7 @@ Review Club is a platform designed to help users find, share, and discuss review
 ## Features
 
 -   **Authentication**: Sign up, log in, and manage user profiles.
--   **Reviews**: Create, read, update, and delete reviews.
--   **Engagement**: Comment on and like reviews.
--   **Search and Filter**: Discover reviews by category, rating, and other criteria.
+-   **Reviews**: Create, read reviews.
 -   **Backend Admin Panel**: For content moderation and user management, their is a backend admin panel.
 
 ## Team Members
@@ -25,9 +23,7 @@ Review Club is a platform designed to help users find, share, and discuss review
 
 1. Users can signup & log in to Review Club to create a profile.
 2. Logged-in users can browse existing reviews or create new ones.
-3. Reviews can be categorized, rated, and tagged for easy discovery.
-4. Users can comment on and discuss reviews.
-5. Admin can manage content and users to maintain community quality.
+3. Admin can manage content and users to maintain community quality.
 
 ## Technologies Used
 
@@ -43,7 +39,7 @@ Review Club is a platform designed to help users find, share, and discuss review
 -   **Express**
 -   **Prisma**
 -   **Tailwind CSS**
--   **Multer**
+-   **Fierbase**
 -   **MonogoDB Atlas**
 
 ## How to Configure
